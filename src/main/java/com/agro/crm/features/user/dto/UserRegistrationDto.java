@@ -1,4 +1,4 @@
-package com.agro.crm.features.user;
+package com.agro.crm.features.user.dto;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;

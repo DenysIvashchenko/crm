@@ -1,5 +1,8 @@
 package com.agro.crm.features.farmers;
 
+import com.agro.crm.features.agromap.feild.Field;
+import com.agro.crm.features.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,18 +26,27 @@ public class Farmer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    @Column(name = "full_name", nullable = false)
+    private String fullName;
     private String phone;
     private String region;
 
     @Enumerated(EnumType.STRING)
     private FarmerStatus status;
 
+    @Column(name = "total_land_ha")
     private Double totalLandHa;
 
     @CreationTimestamp
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manager_id")
+    @JsonIgnoreProperties({"password", "roles", "createdAt", "updatedAt"})
+    private User manager;
+
     @OneToMany(mappedBy = "farmer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("farmer")
     private List<Field> fields = new ArrayList<>();
 }

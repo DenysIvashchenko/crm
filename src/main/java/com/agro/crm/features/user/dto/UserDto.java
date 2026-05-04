@@ -1,5 +1,7 @@
-package com.agro.crm.features.user;
+package com.agro.crm.features.user.dto;
 
+import com.agro.crm.features.user.Role;
+import com.agro.crm.features.user.User;
 import lombok.Builder;
 import lombok.Data;
 import java.time.LocalDateTime;

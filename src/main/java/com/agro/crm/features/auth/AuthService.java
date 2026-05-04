@@ -5,7 +5,7 @@ import com.agro.crm.features.auth.dto.AuthResponse;
 import com.agro.crm.features.auth.dto.LoginRequest;
 import com.agro.crm.features.user.Role;
 import com.agro.crm.features.user.User;
-import com.agro.crm.features.user.UserDto;
+import com.agro.crm.features.user.dto.UserDto;
 import com.agro.crm.features.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

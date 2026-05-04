@@ -21,9 +21,11 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/users/**").hasAuthority("ADMIN")
                         .requestMatchers( "/api/farmers/**").hasAnyAuthority("ADMIN", "MANAGER")
+                        .requestMatchers( "/api/fields/**").hasAnyAuthority("ADMIN", "MANAGER","AGRONOMIST")
+                        .requestMatchers( "/api/crops/**").hasAnyAuthority("ADMIN", "MANAGER","AGRONOMIST")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception

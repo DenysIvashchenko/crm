@@ -1,6 +1,6 @@
 package com.agro.crm.features.auth.dto;
 
-import com.agro.crm.features.user.UserDto;
+import com.agro.crm.features.user.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
