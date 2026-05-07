@@ -6,23 +6,25 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController("/api/crops")
+@RestController
+@RequestMapping("/api/crops")
 @RequiredArgsConstructor
+
 public class CropController {
 
     private final CropService cropService;
 
-    @PostMapping("/{fieldId}/fields")
+    @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN','AGRONOMIST')")
-    public Crop plant(@PathVariable Long fieldId, @RequestBody Crop crop) {
-        return cropService.plant(fieldId, crop);
+    public Crop plant( @RequestBody CropDto crop) {
+        return cropService.plant(crop);
     }
 
-    // PUT /api/crops/1/harvest?actualYield=4.5 — записать урожай
-    @PutMapping("/{id}/harvest")
+    // PUT /api/crops/1/harvest?actualYield=4.5 —
+    @PutMapping("/{cropId}/harvest")
     @PreAuthorize("hasAnyRole('ADMIN','AGRONOMIST')")
-    public Crop harvest(@PathVariable Long id, @RequestParam Double actualYield) {
-        return cropService.harvest(id, actualYield);
+    public Crop harvest(@PathVariable Long cropId, @RequestParam Double actualYield) {
+        return cropService.harvest(cropId, actualYield);
     }
 
     // GET /api/crops/report?season=2025

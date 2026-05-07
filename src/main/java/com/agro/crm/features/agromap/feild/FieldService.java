@@ -17,6 +17,13 @@ public class FieldService {
 
     @Transactional
     public Field createField(FieldDto dto) {
+        if (fieldRepository.existsByNameAndFarmerId(dto.getName(), dto.getFarmerId())) {
+            throw new RuntimeException("Field with name '" + dto.getName() + "' already exists for this farmer");
+        }
+
+        if (fieldRepository.existsByLatitudeAndLongitude(dto.getLatitude(), dto.getLongitude())) {
+            throw new RuntimeException("Field with these coordinates already exists");
+        }
         Farmer farmer = farmerRepository.findById(dto.getFarmerId())
                 .orElseThrow(() -> new RuntimeException("Farmer not found"));
 

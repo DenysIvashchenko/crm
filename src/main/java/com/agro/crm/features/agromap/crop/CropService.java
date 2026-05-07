@@ -6,6 +6,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -15,11 +17,18 @@ public class CropService {
     private final CropRepository cropRepository;
     private final FieldRepository fieldRepository;
 
-    public Crop plant(Long fieldId, Crop crop) {
-        Field field = fieldRepository.findById(fieldId)
-                .orElseThrow(() -> new RuntimeException("Field not found: " + fieldId));
+    public Crop plant(CropDto dto) {
+        Field field = fieldRepository.findById(dto.getFieldId())
+                .orElseThrow(() -> new RuntimeException("Field not found with id: " + dto.getFieldId()));
+
+        Crop crop = new Crop();
+        crop.setName(dto.getName());
+        crop.setSeason(dto.getSeason());
+        crop.setPlantingDate(LocalDate.parse(dto.getPlantingDate()));
+        crop.setExpectedYield(BigDecimal.valueOf(dto.getExpectedYield()));
         crop.setField(field);
         crop.setStatus(CropStatus.PLANTED);
+
         return cropRepository.save(crop);
     }
 

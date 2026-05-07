@@ -21,11 +21,7 @@ public class PasswordConfig {
                 .map(user -> org.springframework.security.core.userdetails.User.builder()
                         .username(user.getEmail())
                         .password(user.getPassword())
-                        .authorities(
-                                user.getRoles().stream()
-                                        .map(role -> "ROLE_" + role.name())
-                                        .toArray(String[]::new)
-                        )
+                        .authorities(user.getRoles().stream().map(Enum::name).toArray(String[]::new))
                         .build())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }

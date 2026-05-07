@@ -1,9 +1,9 @@
 package com.agro.crm.features.agromap.crop;
 
 import com.agro.crm.features.agromap.feild.Field;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "crops")
 @Data
-@Builder
+
 public class Crop {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +33,7 @@ public class Crop {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "field_id")
-    @JsonIgnoreProperties("crops")
+    @JsonIgnore
     private Field field;
 
     @Enumerated(EnumType.STRING)

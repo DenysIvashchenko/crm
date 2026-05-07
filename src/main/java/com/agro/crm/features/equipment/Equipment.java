@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -19,7 +20,7 @@ public class Equipment {
     @Column(nullable = false)
     private String name; // e.g., "John Deere 8R", "Drone Sprayer v2"
 
-    private String type; // TRACTOR, HARVESTER, DRONE
+    private EquipmentType type;
 
     @Column(name = "license_plate")
     private String licensePlate;
@@ -30,7 +31,11 @@ public class Equipment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "operator_id")
     @JsonIgnoreProperties({"password", "roles", "createdAt"})
-    private User operator; // Link to the employee (Operator)
+    private User operator;
+    private Integer yearMade;
+    private Double mileage;
+
+    private LocalDate nextService;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

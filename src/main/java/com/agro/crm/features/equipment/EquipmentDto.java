@@ -6,7 +6,7 @@ import lombok.Data;
 public class EquipmentDto {
     private Long id;
     private String name;
-    private String type;
+    private EquipmentType type;
     private String licensePlate;
     private EquipmentStatus status;
     private Long operatorId;
