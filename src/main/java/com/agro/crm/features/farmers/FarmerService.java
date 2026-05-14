@@ -3,6 +3,7 @@ package com.agro.crm.features.farmers;
 import com.agro.crm.features.agromap.feild.Field;
 import com.agro.crm.features.user.User;
 import com.agro.crm.features.user.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,7 +22,7 @@ public class FarmerService {
     public Farmer createFarmer(FarmerCreateRequest dto) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User manager = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Manager not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Manager not found"));
         Farmer farmer = new Farmer();
         farmer.setFullName(dto.getFullName());
         farmer.setPhone(dto.getPhone());
@@ -55,7 +56,7 @@ public class FarmerService {
 
     public Farmer getById(Long id) {
         return farmerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Farmer not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Farmer not found"));
     }
 
     @Transactional

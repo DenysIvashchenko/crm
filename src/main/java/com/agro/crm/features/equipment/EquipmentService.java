@@ -1,5 +1,6 @@
 package com.agro.crm.features.equipment;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,14 +32,14 @@ public class EquipmentService {
 
     public Equipment changeStatus(Long id, EquipmentStatus status) {
         Equipment eq = equipmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Equipment not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Equipment not found"));
         eq.setStatus(status);
         return equipmentRepository.save(eq);
     }
 
     public EquipmentLog addLog(Long equipmentId, EquipmentLog log) {
         Equipment eq = equipmentRepository.findById(equipmentId)
-                .orElseThrow(() -> new RuntimeException("Equipment not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Equipment not found"));
 
         log.setEquipment(eq);
 

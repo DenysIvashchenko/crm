@@ -2,6 +2,7 @@ package com.agro.crm.features.user;
 
 import com.agro.crm.features.auth.dto.RegisterRequest;
 import com.agro.crm.features.user.dto.UserDto;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,7 +33,7 @@ public class UserService {
     @Transactional
     public UserDto updateUser(Long id, RegisterRequest req) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         user.setUsername(req.getUsername());
         user.setEmail(req.getEmail());
@@ -45,7 +46,7 @@ public class UserService {
     }
 
     public UserDto getById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("user not found"));
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("user not found"));
         return UserDto.from(user);
     }
 
