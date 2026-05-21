@@ -34,7 +34,6 @@ public class CropController {
         return cropService.getSeasonReport(season);
     }
 
-    // GET /api/fields/1/crops
     @GetMapping("/{fieldId}/fields")
     @PreAuthorize("hasAnyRole('ADMIN','AGRONOMIST','MANAGER')")
     public List<Crop> byField(@PathVariable Long fieldId) {

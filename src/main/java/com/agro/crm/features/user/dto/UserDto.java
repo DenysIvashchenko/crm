@@ -13,6 +13,7 @@ public class UserDto {
 
     private Long id;
     private String userName;
+    private String fullName;
     private String email;
     private Set<Role> roles;
     private LocalDateTime createdAt;
@@ -20,7 +21,8 @@ public class UserDto {
     public static UserDto from(User user) {
         return UserDto.builder()
                 .id(user.getId())
-                .userName(user.getUsername())
+                .userName(user.getUserName())
+                .fullName(user.getFullName())
                 .email(user.getEmail())
                 .roles(user.getRoles())
                 .createdAt(user.getCreatedAt())

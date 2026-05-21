@@ -9,6 +9,7 @@ import java.util.List;
 public class FarmerCreateRequest {
     private String fullName;
     private String phone;
+    private String email;
     private String region;
     private Double totalLandHa;
     private List<FieldDto> fields;

@@ -26,9 +26,10 @@ public class FarmerService {
         Farmer farmer = new Farmer();
         farmer.setFullName(dto.getFullName());
         farmer.setPhone(dto.getPhone());
+        farmer.setEmail(dto.getEmail());
         farmer.setRegion(dto.getRegion());
         farmer.setTotalLandHa(dto.getTotalLandHa());
-        farmer.setStatus(FarmerStatus.ACTIVE);
+        farmer.setStatus(FarmerStatus.NEW);
         farmer.setManager(manager);
 
         if (dto.getFields() != null && !dto.getFields().isEmpty()) {

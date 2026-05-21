@@ -18,8 +18,11 @@ public class User {
     private Long id;
 
     @NotBlank(message = "Username is mandatory")
-    @Column(unique = true)
-    private String username;
+    @Column(name = "username", unique = true)
+    private String userName;
+
+    @NotBlank
+    private String fullName;
 
     @Email
     @NotBlank

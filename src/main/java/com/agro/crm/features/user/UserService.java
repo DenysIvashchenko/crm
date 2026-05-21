@@ -2,6 +2,7 @@ package com.agro.crm.features.user;
 
 import com.agro.crm.features.auth.dto.RegisterRequest;
 import com.agro.crm.features.user.dto.UserDto;
+import com.agro.crm.features.user.dto.UserUpdateRequestDto;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,8 @@ public class UserService {
 
     public UserDto createUser(RegisterRequest req) {
         User user = new User();
-        user.setUsername(req.getUsername());
+        user.setUserName(req.getUsername());
+        user.setFullName(req.getFullName());
         user.setEmail(req.getEmail());
         user.setPassword(passwordEncoder.encode(req.getPassword()));
 
@@ -31,18 +33,26 @@ public class UserService {
     }
 
     @Transactional
-    public UserDto updateUser(Long id, RegisterRequest req) {
+    public UserDto updateUser(Long id, UserUpdateRequestDto req) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
 
-        user.setUsername(req.getUsername());
+        user.setUserName(req.getUserName());
+        user.setFullName(req.getFullName());
         user.setEmail(req.getEmail());
-        if (req.getPassword() != null && !req.getPassword().isEmpty()) {
+
+        if (req.getPassword() != null && !req.getPassword().trim().isEmpty()) {
             user.setPassword(passwordEncoder.encode(req.getPassword()));
         }
-        user.setRoles(req.getRoles());
 
-        return UserDto.from(userRepository.save(user));
+        if (req.getRoles() != null) {
+            user.getRoles().clear();
+            user.getRoles().addAll(req.getRoles());
+        }
+
+        User savedUser = userRepository.saveAndFlush(user);
+
+        return UserDto.from(savedUser);
     }
 
     public UserDto getById(Long id) {

@@ -34,6 +34,7 @@ public class FieldService {
         field.setSoilType(dto.getSoilType());
         field.setLatitude(dto.getLatitude());
         field.setLongitude(dto.getLongitude());
+        field.setBoundaryCoordinates(dto.getBoundaryCoordinates());
         field.setFarmer(farmer);
 
         return fieldRepository.save(field);
@@ -59,7 +60,7 @@ public class FieldService {
         return fieldRepository.save(field);
     }
 
-    public void deleteField(Long id) {
-        fieldRepository.deleteById(id);
+    public void deleteField(Long fieldId) {
+        fieldRepository.deleteById(fieldId);
     }
 }

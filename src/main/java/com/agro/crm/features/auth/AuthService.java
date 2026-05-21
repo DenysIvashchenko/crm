@@ -34,7 +34,7 @@ public class AuthService {
                 .map(Role::name)
                 .collect(Collectors.joining(","));
 
-        String token = jwtService.generateToken(user.getEmail(), user.getUsername(), roles);
+        String token = jwtService.generateToken(user.getEmail(), user.getUserName(), roles);
         return AuthResponse.builder()
                 .token(token)
                 .user(UserDto.from(user))
