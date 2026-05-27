@@ -31,6 +31,7 @@ public class Farmer {
     private String fullName;
     private String phone;
     private String region;
+    private String color;
 
     @Email
     private String email;
