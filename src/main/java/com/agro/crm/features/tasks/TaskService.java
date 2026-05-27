@@ -7,6 +7,7 @@ import com.agro.crm.features.equipment.EquipmentRepository;
 import com.agro.crm.features.equipment.EquipmentStatus;
 import com.agro.crm.features.user.User;
 import com.agro.crm.features.user.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,13 +31,13 @@ public class TaskService {
 
         String creatorEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         User creator = userRepository.findByEmail(creatorEmail)
-                .orElseThrow(() -> new RuntimeException("Creator not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Creator not found"));
 
         Field field = fieldRepository.findById(dto.getFieldId())
-                .orElseThrow(() -> new RuntimeException("Field not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Field not found"));
 
         User operator = userRepository.findById(dto.getAssignedToId())
-                .orElseThrow(() -> new RuntimeException("Operator not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Operator not found"));
 
         Task task = new Task();
         task.setTitle(dto.getTitle());
@@ -48,10 +49,10 @@ public class TaskService {
 
         if (dto.getEquipmentId() != null) {
             Equipment eq = equipmentRepository.findById(dto.getEquipmentId())
-                    .orElseThrow(() -> new RuntimeException("Equipment not found"));
+                    .orElseThrow(() -> new EntityNotFoundException("Equipment not found"));
 
             if (eq.getStatus() == EquipmentStatus.BROKEN || eq.getStatus() == EquipmentStatus.MAINTENANCE) {
-                throw new RuntimeException("Equipment not evaluable: " + eq.getStatus());
+                throw new EntityNotFoundException("Equipment not evaluable: " + eq.getStatus());
             }
 
             task.setEquipment(eq);
@@ -63,18 +64,18 @@ public class TaskService {
 
     public Task changeStatus(Long taskId, TaskStatus status) {
         Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Task not found"));
         task.setStatus(status);
         return taskRepository.save(task);
     }
 
     public TaskComment addComment(Long taskId, String text) {
         Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Task not found"));
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Current user not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Current user not found"));
 
         TaskComment comment = new TaskComment();
         comment.setTask(task);
@@ -88,7 +89,7 @@ public class TaskService {
     public List<Task> getMyTasks() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         return taskRepository.findByAssignedToId(currentUser.getId());
     }

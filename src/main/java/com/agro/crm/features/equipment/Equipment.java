@@ -18,7 +18,7 @@ public class Equipment {
     private Long id;
 
     @Column(nullable = false)
-    private String name; // e.g., "John Deere 8R", "Drone Sprayer v2"
+    private String name;
 
     private EquipmentType type;
 
@@ -36,6 +36,8 @@ public class Equipment {
     private Double mileage;
 
     private LocalDate nextService;
+
+    private String deviceId;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

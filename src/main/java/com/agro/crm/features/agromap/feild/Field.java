@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -30,8 +32,15 @@ public class Field {
     @Enumerated(EnumType.STRING)
     private SoilType soilType;
 
+    @Column(precision = 9, scale = 6)
     private BigDecimal latitude;
+
+    @Column(precision = 9, scale = 6)
     private BigDecimal longitude;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "boundary_coordinates", columnDefinition = "jsonb")
+    private String boundaryCoordinates;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "farmer_id")

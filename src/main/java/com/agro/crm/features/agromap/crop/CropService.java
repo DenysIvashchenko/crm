@@ -2,6 +2,7 @@ package com.agro.crm.features.agromap.crop;
 
 import com.agro.crm.features.agromap.feild.Field;
 import com.agro.crm.features.agromap.feild.FieldRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public class CropService {
 
     public Crop plant(CropDto dto) {
         Field field = fieldRepository.findById(dto.getFieldId())
-                .orElseThrow(() -> new RuntimeException("Field not found with id: " + dto.getFieldId()));
+                .orElseThrow(() -> new EntityNotFoundException("Field not found with id: " + dto.getFieldId()));
 
         Crop crop = new Crop();
         crop.setName(dto.getName());
@@ -34,7 +35,7 @@ public class CropService {
 
     public Crop harvest(Long cropId, Double actualYield) {
         Crop crop = cropRepository.findById(cropId)
-                .orElseThrow(() -> new RuntimeException("Crop not found: " + cropId));
+                .orElseThrow(() -> new EntityNotFoundException("Crop not found: " + cropId));
         crop.setActualYield(actualYield);
         crop.setStatus(CropStatus.HARVESTED);
         return cropRepository.save(crop);

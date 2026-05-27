@@ -2,6 +2,7 @@ package com.agro.crm.features.user;
 
 import com.agro.crm.features.auth.dto.RegisterRequest;
 import com.agro.crm.features.user.dto.UserDto;
+import com.agro.crm.features.user.dto.UserUpdateRequestDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -35,7 +36,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public UserDto update(@PathVariable Long id, @Valid @RequestBody RegisterRequest req) {
+    public UserDto update(@PathVariable Long id, @Valid @RequestBody UserUpdateRequestDto req) {
         return userService.updateUser(id, req);
     }
 

@@ -31,6 +31,8 @@ public class Crop {
     @Column(name = "expected_yield")
     private BigDecimal expectedYield; // План урожайности (тонн/га) из твоей схемы
 
+    private Double actualYield;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "field_id")
     @JsonIgnore
@@ -38,8 +40,6 @@ public class Crop {
 
     @Enumerated(EnumType.STRING)
     private CropStatus status;
-
-    private Double actualYield;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

@@ -4,6 +4,7 @@ import com.agro.crm.features.agromap.feild.Field;
 import com.agro.crm.features.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,6 +31,10 @@ public class Farmer {
     private String fullName;
     private String phone;
     private String region;
+    private String color;
+
+    @Email
+    private String email;
 
     @Enumerated(EnumType.STRING)
     private FarmerStatus status;

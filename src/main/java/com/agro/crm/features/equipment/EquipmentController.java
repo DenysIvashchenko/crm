@@ -1,5 +1,7 @@
 package com.agro.crm.features.equipment;
 
+import com.agro.crm.features.equipment.dto.EquipmentDto;
+import com.agro.crm.features.equipment.dto.EquipmentResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -15,19 +17,19 @@ public class EquipmentController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','AGRONOMIST')")
-    public List<Equipment> getAll() {
+    public List<EquipmentResponseDto> getAll() {
         return service.getAll();
     }
 
     @GetMapping("/available")
     @PreAuthorize("hasAnyRole('ADMIN','AGRONOMIST','OPERATOR')")
-    public List<Equipment> getAvailable() {
+    public List<EquipmentResponseDto> getAvailable() {
         return service.getAvailable();
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public Equipment create(@RequestBody Equipment equipment) {
+    @PreAuthorize("hasRole('ADMIN','AGRONOMIST')")
+    public EquipmentResponseDto create(@RequestBody EquipmentDto equipment) {
         return service.create(equipment);
     }
 

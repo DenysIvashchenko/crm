@@ -2,6 +2,7 @@ package com.agro.crm.features.agromap.feild;
 
 import com.agro.crm.features.farmers.Farmer;
 import com.agro.crm.features.farmers.FarmerRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,14 +19,14 @@ public class FieldService {
     @Transactional
     public Field createField(FieldDto dto) {
         if (fieldRepository.existsByNameAndFarmerId(dto.getName(), dto.getFarmerId())) {
-            throw new RuntimeException("Field with name '" + dto.getName() + "' already exists for this farmer");
+            throw new EntityNotFoundException("Field with name '" + dto.getName() + "' already exists for this farmer");
         }
 
         if (fieldRepository.existsByLatitudeAndLongitude(dto.getLatitude(), dto.getLongitude())) {
-            throw new RuntimeException("Field with these coordinates already exists");
+            throw new EntityNotFoundException("Field with these coordinates already exists");
         }
         Farmer farmer = farmerRepository.findById(dto.getFarmerId())
-                .orElseThrow(() -> new RuntimeException("Farmer not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Farmer not found"));
 
         Field field = new Field();
         field.setName(dto.getName());
@@ -33,6 +34,7 @@ public class FieldService {
         field.setSoilType(dto.getSoilType());
         field.setLatitude(dto.getLatitude());
         field.setLongitude(dto.getLongitude());
+        field.setBoundaryCoordinates(dto.getBoundaryCoordinates());
         field.setFarmer(farmer);
 
         return fieldRepository.save(field);
@@ -44,7 +46,7 @@ public class FieldService {
 
     public Field getById(Long id) {
         return fieldRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Field not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Field not found"));
     }
 
     @Transactional
@@ -58,7 +60,7 @@ public class FieldService {
         return fieldRepository.save(field);
     }
 
-    public void deleteField(Long id) {
-        fieldRepository.deleteById(id);
+    public void deleteField(Long fieldId) {
+        fieldRepository.deleteById(fieldId);
     }
 }
