@@ -20,7 +20,6 @@ public class CorsConfig {
                 "http://localhost:3000"
         ));
 
-        // какие методы разрешаем
         config.setAllowedMethods(List.of(
                 "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"
         ));

@@ -35,6 +35,7 @@ public class FieldService {
         field.setLatitude(dto.getLatitude());
         field.setLongitude(dto.getLongitude());
         field.setBoundaryCoordinates(dto.getBoundaryCoordinates());
+        field.setColorField(farmer.getColor());
         field.setFarmer(farmer);
 
         return fieldRepository.save(field);
@@ -47,6 +48,10 @@ public class FieldService {
     public Field getById(Long id) {
         return fieldRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Field not found"));
+    }
+
+    public List<Field> getAllFields(){
+        return fieldRepository.findAll();
     }
 
     @Transactional

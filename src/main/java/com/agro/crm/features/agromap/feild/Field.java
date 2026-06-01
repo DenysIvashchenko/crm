@@ -47,6 +47,9 @@ public class Field {
     @JsonIgnore
     private Farmer farmer;
 
+    @Column
+    private String colorField;
+
     @OneToMany(mappedBy = "field", cascade = CascadeType.ALL)
     private List<Crop> crops;
 

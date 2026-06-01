@@ -26,6 +26,8 @@ public class SecurityConfig {
                         .requestMatchers( "/api/farmers/**").hasAnyAuthority("ADMIN", "MANAGER")
                         .requestMatchers( "/api/fields/**").hasAnyAuthority("ADMIN", "MANAGER","AGRONOMIST")
                         .requestMatchers( "/api/crops/**").hasAnyAuthority("ADMIN", "MANAGER","AGRONOMIST")
+                        .requestMatchers( "/api/tasks/**").hasAnyAuthority("ADMIN", "MANAGER","AGRONOMIST","OPERATOR")
+                        .requestMatchers( "/api/equipment/**").hasAnyAuthority("ADMIN", "MANAGER","AGRONOMIST","OPERATOR")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception

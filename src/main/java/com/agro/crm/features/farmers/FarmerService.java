@@ -46,6 +46,7 @@ public class FarmerService {
                 field.setAreaHa(fieldDto.getAreaHa());
                 field.setSoilType(fieldDto.getSoilType());
                 field.setLatitude(fieldDto.getLatitude());
+                field.setColorField(colors[randomNum]);
                 field.setLongitude(fieldDto.getLongitude());
 
                 field.setFarmer(farmer);
