@@ -20,11 +20,13 @@ public class FarmerController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<Farmer> list() {
         return farmerService.getAll();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public Farmer getOne(@PathVariable Long id) {
         return farmerService.getById(id);
     }

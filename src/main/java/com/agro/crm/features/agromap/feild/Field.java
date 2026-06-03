@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -51,6 +53,7 @@ public class Field {
     private String colorField;
 
     @OneToMany(mappedBy = "field", cascade = CascadeType.ALL)
+    @Fetch(FetchMode.SUBSELECT)
     private List<Crop> crops;
 
     @CreationTimestamp

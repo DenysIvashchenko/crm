@@ -51,7 +51,7 @@ public class FieldService {
     }
 
     public List<Field> getAllFields(){
-        return fieldRepository.findAll();
+        return fieldRepository.findAllWithCrops();
     }
 
     @Transactional

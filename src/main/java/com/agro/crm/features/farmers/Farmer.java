@@ -10,6 +10,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -53,5 +55,6 @@ public class Farmer {
 
     @OneToMany(mappedBy = "farmer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties("farmer")
+    @Fetch(FetchMode.SUBSELECT)
     private List<Field> fields = new ArrayList<>();
 }

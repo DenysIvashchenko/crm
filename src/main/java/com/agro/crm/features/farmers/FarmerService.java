@@ -60,7 +60,7 @@ public class FarmerService {
     }
 
     public List<Farmer> getAll() {
-        return farmerRepository.findAll();
+        return farmerRepository.findAllWithFieldsAndManager();
     }
 
     public Farmer getById(Long id) {
@@ -74,6 +74,7 @@ public class FarmerService {
         farmer.setFullName(dto.getFullName());
         farmer.setPhone(dto.getPhone());
         farmer.setRegion(dto.getRegion());
+        farmer.setStatus(dto.getStatus());
         farmer.setTotalLandHa(dto.getTotalLandHa());
 
         return farmerRepository.save(farmer);

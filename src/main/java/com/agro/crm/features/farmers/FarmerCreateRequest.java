@@ -16,6 +16,8 @@ public class FarmerCreateRequest {
     private String email;
     @NotBlank
     private String region;
+
+    private  FarmerStatus status;
     @NotBlank
     private Double totalLandHa;
     private List<FieldDto> fields;
