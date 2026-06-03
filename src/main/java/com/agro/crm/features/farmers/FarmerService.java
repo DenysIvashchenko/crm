@@ -6,6 +6,8 @@ import com.agro.crm.features.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,7 @@ public class FarmerService {
     private final String[] colors = {"#2E7D32","#1565C0","#E65100","#6A1B9A","#E65100","#AD1457","#00695C","#4E342E","#4E342E"};
 
     @Transactional
+    @CacheEvict(value = "farmers", allEntries = true)
     public Farmer createFarmer(FarmerCreateRequest dto) {
         Random rand = new Random();
         int randomNum = rand.nextInt(8);
@@ -47,6 +50,7 @@ public class FarmerService {
                 field.setSoilType(fieldDto.getSoilType());
                 field.setLatitude(fieldDto.getLatitude());
                 field.setColorField(colors[randomNum]);
+                field.setBoundaryCoordinates(fieldDto.getBoundaryCoordinates());
                 field.setLongitude(fieldDto.getLongitude());
 
                 field.setFarmer(farmer);
@@ -59,6 +63,7 @@ public class FarmerService {
         return farmerRepository.save(farmer);
     }
 
+    @Cacheable(value = "farmers")
     public List<Farmer> getAll() {
         return farmerRepository.findAllWithFieldsAndManager();
     }
