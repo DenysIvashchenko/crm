@@ -7,7 +7,6 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +19,7 @@ public class FarmerService {
 
     private final FarmerRepository farmerRepository;
     private final UserRepository userRepository;
+    private final FarmerCacheService farmerCacheService;
 
     private final String[] colors = {"#2E7D32","#1565C0","#E65100","#6A1B9A","#E65100","#AD1457","#00695C","#4E342E","#4E342E"};
 
@@ -63,9 +63,13 @@ public class FarmerService {
         return farmerRepository.save(farmer);
     }
 
-    @Cacheable(value = "farmers")
-    public List<Farmer> getAll() {
-        return farmerRepository.findAllWithFieldsAndManager();
+    public List<Farmer> getAll(String search) {
+        String cleanSearch = (search != null && !search.trim().isEmpty()) ? search.trim() : null;
+
+        if(cleanSearch == null) {
+            return farmerCacheService.getAllWithCache();
+        }
+        return farmerRepository.searchFarmersWithFieldsAndManager(search);
     }
 
     public Farmer getById(Long id) {
@@ -74,6 +78,7 @@ public class FarmerService {
     }
 
     @Transactional
+    @CacheEvict(value = "farmers", allEntries = true)
     public Farmer update(Long id, FarmerCreateRequest dto) {
         Farmer farmer = getById(id);
         farmer.setFullName(dto.getFullName());
@@ -85,6 +90,7 @@ public class FarmerService {
         return farmerRepository.save(farmer);
     }
 
+    @CacheEvict(value = "farmers", allEntries = true)
     public void delete(Long id) {
         farmerRepository.deleteById(id);
     }

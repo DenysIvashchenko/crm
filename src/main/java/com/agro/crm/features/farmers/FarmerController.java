@@ -1,5 +1,6 @@
 package com.agro.crm.features.farmers;
 
+import com.agro.crm.features.agromap.feild.SoilType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +22,9 @@ public class FarmerController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<Farmer> list() {
-        return farmerService.getAll();
+    public List<Farmer> list(
+            @RequestParam(value = "search", required = false) String search) {
+        return farmerService.getAll(search);
     }
 
     @GetMapping("/{id}")
