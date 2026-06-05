@@ -5,6 +5,8 @@ import com.agro.crm.features.farmers.FarmerRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +19,7 @@ public class FieldService {
     private final FarmerRepository farmerRepository;
 
     @Transactional
+    @CacheEvict(value = "field", allEntries = true)
     public Field createField(FieldDto dto) {
         if (fieldRepository.existsByNameAndFarmerId(dto.getName(), dto.getFarmerId())) {
             throw new EntityNotFoundException("Field with name '" + dto.getName() + "' already exists for this farmer");
@@ -50,11 +53,13 @@ public class FieldService {
                 .orElseThrow(() -> new EntityNotFoundException("Field not found"));
     }
 
+    @Cacheable("field")
     public List<Field> getAllFields(){
         return fieldRepository.findAllWithCrops();
     }
 
     @Transactional
+    @CacheEvict(value = "field", allEntries = true)
     public Field updateField(Long id, FieldDto dto) {
         Field field = getById(id);
         field.setName(dto.getName());
@@ -65,6 +70,7 @@ public class FieldService {
         return fieldRepository.save(field);
     }
 
+    @CacheEvict(value = "field", allEntries = true)
     public void deleteField(Long fieldId) {
         fieldRepository.deleteById(fieldId);
     }

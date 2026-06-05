@@ -40,7 +40,7 @@ public class CacheConfig {
                                 RedisSerializationContext.SerializationPair
                                         .fromSerializer(serializer)
                         )
-                        .entryTtl(Duration.ofMinutes(10));
+                        .entryTtl(Duration.ofMinutes(30));
 
         return RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(config)
