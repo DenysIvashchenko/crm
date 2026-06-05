@@ -4,7 +4,9 @@ import com.agro.crm.features.agromap.crop.Crop;
 import com.agro.crm.features.farmers.Farmer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -17,8 +19,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "fields")
-@Data
-
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Field {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,4 +61,58 @@ public class Field {
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    private Field(
+            String name,
+            BigDecimal areaHa,
+            SoilType soilType,
+            BigDecimal latitude,
+            BigDecimal longitude,
+            String boundaryCoordinates,
+            String colorField
+    ) {
+        this.name = name;
+        this.areaHa = areaHa;
+        this.soilType = soilType;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.boundaryCoordinates = boundaryCoordinates;
+        this.colorField = colorField;
+    }
+
+    public static Field create(
+            FieldDto dto,
+            String color
+    ) {
+        return new Field(
+                dto.getName(),
+                dto.getAreaHa(),
+                dto.getSoilType(),
+                dto.getLatitude(),
+                dto.getLongitude(),
+                dto.getBoundaryCoordinates(),
+                color
+        );
+    }
+
+    public void updateInfo(
+            String name,
+            BigDecimal areaHa,
+            SoilType soilType,
+            BigDecimal latitude,
+            BigDecimal longitude,
+            String boundaryCoordinates
+    ) {
+
+        this.name = name;
+        this.areaHa = areaHa;
+        this.soilType = soilType;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.boundaryCoordinates = boundaryCoordinates;
+    }
+
+    public void assignTo(Farmer farmer) {
+        this.farmer = farmer;
+    }
 }

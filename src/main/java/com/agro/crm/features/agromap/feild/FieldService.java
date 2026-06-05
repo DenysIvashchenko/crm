@@ -22,24 +22,18 @@ public class FieldService {
     @CacheEvict(value = "field", allEntries = true)
     public Field createField(FieldDto dto) {
         if (fieldRepository.existsByNameAndFarmerId(dto.getName(), dto.getFarmerId())) {
-            throw new EntityNotFoundException("Field with name '" + dto.getName() + "' already exists for this farmer");
+            throw new EntityNotFoundException("Field with name '" + dto.getName() + "' already exists");
         }
 
         if (fieldRepository.existsByLatitudeAndLongitude(dto.getLatitude(), dto.getLongitude())) {
             throw new EntityNotFoundException("Field with these coordinates already exists");
         }
-        Farmer farmer = farmerRepository.findById(dto.getFarmerId())
-                .orElseThrow(() -> new EntityNotFoundException("Farmer not found"));
 
-        Field field = new Field();
-        field.setName(dto.getName());
-        field.setAreaHa(dto.getAreaHa());
-        field.setSoilType(dto.getSoilType());
-        field.setLatitude(dto.getLatitude());
-        field.setLongitude(dto.getLongitude());
-        field.setBoundaryCoordinates(dto.getBoundaryCoordinates());
-        field.setColorField(farmer.getColor());
-        field.setFarmer(farmer);
+        Farmer farmer = farmerRepository.findById(dto.getFarmerId()).orElseThrow(() -> new EntityNotFoundException("Farmer not found"));
+
+        Field field = Field.create(dto, farmer.getColor());
+
+        farmer.addField(field);
 
         return fieldRepository.save(field);
     }
@@ -49,25 +43,28 @@ public class FieldService {
     }
 
     public Field getById(Long id) {
-        return fieldRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Field not found"));
+        return fieldRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Field not found"));
     }
 
     @Cacheable("field")
-    public List<Field> getAllFields(){
+    public List<Field> getAllFields() {
         return fieldRepository.findAllWithCrops();
     }
 
     @Transactional
-    @CacheEvict(value = "field", allEntries = true)
+    @CacheEvict(value = "field", allEntries = true, beforeInvocation = false)
     public Field updateField(Long id, FieldDto dto) {
         Field field = getById(id);
-        field.setName(dto.getName());
-        field.setAreaHa(dto.getAreaHa());
-        field.setSoilType(dto.getSoilType());
-        field.setLatitude(dto.getLatitude());
-        field.setLongitude(dto.getLongitude());
-        return fieldRepository.save(field);
+
+        field.updateInfo(
+                dto.getName(),
+                dto.getAreaHa(),
+                dto.getSoilType(),
+                dto.getLatitude(),
+                dto.getLongitude(),
+                dto.getBoundaryCoordinates()
+        );
+        return field;
     }
 
     @CacheEvict(value = "field", allEntries = true)
