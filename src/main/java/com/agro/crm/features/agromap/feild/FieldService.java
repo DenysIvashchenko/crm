@@ -30,9 +30,7 @@ public class FieldService {
         }
 
         Farmer farmer = farmerRepository.findById(dto.getFarmerId()).orElseThrow(() -> new EntityNotFoundException("Farmer not found"));
-
         Field field = Field.create(dto, farmer.getColor());
-
         farmer.addField(field);
 
         return fieldRepository.save(field);

@@ -71,6 +71,8 @@ public class Field {
             String boundaryCoordinates,
             String colorField
     ) {
+        this.validate(name, areaHa, latitude, longitude);
+
         this.name = name;
         this.areaHa = areaHa;
         this.soilType = soilType;
@@ -103,7 +105,7 @@ public class Field {
             BigDecimal longitude,
             String boundaryCoordinates
     ) {
-
+        this.validate(name, areaHa, latitude, longitude);
         this.name = name;
         this.areaHa = areaHa;
         this.soilType = soilType;
@@ -114,5 +116,25 @@ public class Field {
 
     public void assignTo(Farmer farmer) {
         this.farmer = farmer;
+    }
+
+    private void validate(
+            String name,
+            BigDecimal areaHa,
+            BigDecimal latitude,
+            BigDecimal longitude
+    ) {
+        if (name == null || name.isBlank())
+            throw new IllegalArgumentException("Field name is required");
+
+        if (areaHa == null || areaHa.compareTo(BigDecimal.ZERO) <= 0)
+            throw new IllegalArgumentException("Area must be positive");
+
+        if (latitude == null)
+            throw new IllegalArgumentException("Latitude is required");
+
+        if (longitude == null)
+            throw new IllegalArgumentException("Longitude is required");
+
     }
 }
