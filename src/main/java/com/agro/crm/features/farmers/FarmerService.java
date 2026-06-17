@@ -46,13 +46,11 @@ public class FarmerService {
         return farmerRepository.save(farmer);
     }
 
-    public List<Farmer> getAll(String search) {
-        String cleanSearch = (search != null && !search.trim().isEmpty()) ? search.trim() : null;
-
-        if (cleanSearch == null) {
+    public List<Farmer> getAll(FarmerFilter filter) {
+        if (filter.isEmpty()) {
             return farmerCacheService.getAllWithCache();
         }
-        return farmerRepository.searchFarmersWithFieldsAndManager(search);
+        return farmerRepository.findAll(FarmerSpec.filter(filter));
     }
 
     public Farmer getById(Long id) {
