@@ -1,6 +1,5 @@
 package com.agro.crm.features.agromap.feild;
 
-import com.agro.crm.features.farmers.Farmer;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

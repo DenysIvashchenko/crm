@@ -1,9 +1,11 @@
 package com.agro.crm.features.agromap.feild;
 
+import com.agro.crm.features.dashboard.AuditAction;
+import com.agro.crm.features.dashboard.AuditService;
 import com.agro.crm.features.farmers.Farmer;
 import com.agro.crm.features.farmers.FarmerRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -17,6 +19,7 @@ public class FieldService {
 
     private final FieldRepository fieldRepository;
     private final FarmerRepository farmerRepository;
+    private final AuditService auditService;
 
     @Transactional
     @CacheEvict(value = "field", allEntries = true)
@@ -32,6 +35,11 @@ public class FieldService {
         Farmer farmer = farmerRepository.findById(dto.getFarmerId()).orElseThrow(() -> new EntityNotFoundException("Farmer not found"));
         Field field = Field.create(dto, farmer.getColor());
         farmer.addField(field);
+
+        auditService.logAction(
+                AuditAction.FIELD_CREATED,
+                "create Field"
+        );
 
         return fieldRepository.save(field);
     }
@@ -62,11 +70,22 @@ public class FieldService {
                 dto.getLongitude(),
                 dto.getBoundaryCoordinates()
         );
+
+        auditService.logAction(
+                AuditAction.FIELD_BOUNDARIES_UPDATED,
+                " updateField"
+        );
+
         return field;
     }
 
     @CacheEvict(value = "field", allEntries = true)
     public void deleteField(Long fieldId) {
+        auditService.logAction(
+                AuditAction.FIELD_DELETED,
+                "delete Field"
+        );
+
         fieldRepository.deleteById(fieldId);
     }
 }

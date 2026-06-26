@@ -56,7 +56,7 @@ public class TaskService {
             }
 
             task.setEquipment(eq);
-            eq.setStatus(EquipmentStatus.IN_USE);
+            eq.updateStatus(EquipmentStatus.IN_USE);
         }
 
         return taskRepository.save(task);

@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -38,7 +39,7 @@ public class User {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();;
 
     @CreationTimestamp
     @Setter(AccessLevel.NONE)
@@ -56,7 +57,9 @@ public class User {
         user.fullName = fullName;
         user.email = email;
         user.password = encodedPassword;
-        user.roles.addAll(roles);
+        if (roles != null) {
+            user.roles.addAll(roles);
+        }
 
         return user;
     }
@@ -81,7 +84,9 @@ public class User {
             Set<Role> roles
     ) {
         this.roles.clear();
-        this.roles.addAll(roles);
+        if (roles != null) {
+            this.roles.addAll(roles);
+        }
     }
 
 }

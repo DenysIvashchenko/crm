@@ -1,6 +1,8 @@
 package com.agro.crm.features.farmers;
 
 import com.agro.crm.features.agromap.feild.Field;
+import com.agro.crm.features.dashboard.AuditAction;
+import com.agro.crm.features.dashboard.AuditService;
 import com.agro.crm.features.user.User;
 import com.agro.crm.features.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -20,6 +22,7 @@ public class FarmerService {
     private final FarmerRepository farmerRepository;
     private final UserRepository userRepository;
     private final FarmerCacheService farmerCacheService;
+    private final AuditService auditService;
 
     private final String[] colors = {"#2E7D32", "#1565C0", "#E65100", "#6A1B9A", "#E65100", "#AD1457", "#00695C", "#4E342E", "#4E342E"};
 
@@ -43,6 +46,11 @@ public class FarmerService {
             });
         }
 
+        auditService.logAction(
+                AuditAction.FARMER_CREATED,
+                "Added new Farmer " + farmer.getFullName() + " (" + farmer.getRegion() + ")"
+        );
+
         return farmerRepository.save(farmer);
     }
 
@@ -63,11 +71,22 @@ public class FarmerService {
         Farmer farmer = getById(id);
 
         farmer.updateProfile(dto.getFullName(), dto.getPhone(), dto.getRegion(), dto.getTotalLandHa(), dto.getStatus());
+
+        auditService.logAction(
+                AuditAction.FARMER_UPDATED,
+                "Updated Farmer " + farmer.getFullName() + " (" + farmer.getRegion() + ")"
+        );
+
         return farmer;
     }
 
     @CacheEvict(value = "farmers", allEntries = true)
     public void delete(Long id) {
+        auditService.logAction(
+                AuditAction.FARMER_DELETED,
+                " Farmer deleted"
+        );
+
         farmerRepository.deleteById(id);
     }
 }

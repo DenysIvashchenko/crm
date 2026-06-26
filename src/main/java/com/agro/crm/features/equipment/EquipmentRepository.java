@@ -11,4 +11,5 @@ public interface EquipmentRepository extends JpaRepository<Equipment, Long>, Jpa
     List<Equipment> findAll();
     List<Equipment> findByStatus(EquipmentStatus status);
     List<Equipment> findByOperatorId(Long operatorId);
+    long countByStatus(EquipmentStatus status);
 }

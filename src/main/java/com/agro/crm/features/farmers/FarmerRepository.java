@@ -23,4 +23,7 @@ public interface FarmerRepository extends JpaRepository<Farmer, Long> , JpaSpeci
     @Override
     @EntityGraph(attributePaths = {"fields", "manager"})
     List<Farmer> findAll(Specification<Farmer> spec);
+
+    @Query("SELECT SUM(f.totalLandHa) FROM Farmer f")
+    Double sumTotalLandAreaHa();
 }
