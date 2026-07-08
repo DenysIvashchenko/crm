@@ -1,7 +1,7 @@
 package com.agro.crm.features.agromap.feild;
 
-import com.agro.crm.features.dashboard.AuditAction;
-import com.agro.crm.features.dashboard.AuditService;
+import com.agro.crm.features.dashboard.activityLog.AuditAction;
+import com.agro.crm.features.dashboard.activityLog.AuditService;
 import com.agro.crm.features.farmers.Farmer;
 import com.agro.crm.features.farmers.FarmerRepository;
 import jakarta.persistence.EntityNotFoundException;

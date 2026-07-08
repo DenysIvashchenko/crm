@@ -1,4 +1,4 @@
-package com.agro.crm.features.dashboard;
+package com.agro.crm.features.dashboard.activityLog;
 
 public enum AuditAction {
     // Farmers

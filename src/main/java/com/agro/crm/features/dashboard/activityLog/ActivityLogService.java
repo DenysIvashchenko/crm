@@ -1,4 +1,4 @@
-package com.agro.crm.features.dashboard;
+package com.agro.crm.features.dashboard.activityLog;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

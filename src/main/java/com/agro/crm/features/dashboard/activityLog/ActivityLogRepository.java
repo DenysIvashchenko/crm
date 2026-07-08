@@ -1,4 +1,4 @@
-package com.agro.crm.features.dashboard;
+package com.agro.crm.features.dashboard.activityLog;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;

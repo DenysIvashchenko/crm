@@ -1,4 +1,4 @@
-package com.agro.crm.features.dashboard;
+package com.agro.crm.features.dashboard.activityLog;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

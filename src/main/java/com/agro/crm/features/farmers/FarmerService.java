@@ -1,8 +1,8 @@
 package com.agro.crm.features.farmers;
 
 import com.agro.crm.features.agromap.feild.Field;
-import com.agro.crm.features.dashboard.AuditAction;
-import com.agro.crm.features.dashboard.AuditService;
+import com.agro.crm.features.dashboard.activityLog.AuditAction;
+import com.agro.crm.features.dashboard.activityLog.AuditService;
 import com.agro.crm.features.user.User;
 import com.agro.crm.features.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
