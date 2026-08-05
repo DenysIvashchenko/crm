@@ -5,10 +5,7 @@ import com.agro.crm.features.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -19,10 +16,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "farmers")
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Farmer {
 
     @Id
@@ -57,4 +52,43 @@ public class Farmer {
     @JsonIgnoreProperties("farmer")
     @Fetch(FetchMode.SUBSELECT)
     private List<Field> fields = new ArrayList<>();
+
+    public static Farmer create(
+            FarmerCreateRequest dto,
+            User manager,
+            String color
+    ) {
+
+        Farmer farmer = new Farmer();
+
+        farmer.fullName = dto.getFullName();
+        farmer.phone = dto.getPhone();
+        farmer.email = dto.getEmail();
+        farmer.region = dto.getRegion();
+        farmer.totalLandHa = dto.getTotalLandHa();
+        farmer.status = FarmerStatus.NEW;
+        farmer.color = color;
+        farmer.manager = manager;
+
+        return farmer;
+    }
+
+    public void updateProfile(
+            String fullName,
+            String phone,
+            String region,
+            Double totalLandHa,
+            FarmerStatus status
+    ) {
+        this.fullName = fullName;
+        this.phone = phone;
+        this.region = region;
+        this.totalLandHa = totalLandHa;
+        this.status = status;
+    }
+
+    public void addField(Field field) {
+        field.assignTo(this);
+        fields.add(field);
+    }
 }

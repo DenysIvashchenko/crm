@@ -2,8 +2,9 @@ package com.agro.crm.features.agromap.crop;
 
 import com.agro.crm.features.agromap.feild.Field;
 import com.agro.crm.features.agromap.feild.FieldRepository;
+import com.agro.crm.features.dashboard.activityLog.AuditService;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,11 +13,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CropService {
 
     private final CropRepository cropRepository;
     private final FieldRepository fieldRepository;
+    private final AuditService auditService;
 
     public Crop plant(CropDto dto) {
         Field field = fieldRepository.findById(dto.getFieldId())

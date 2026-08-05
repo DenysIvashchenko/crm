@@ -1,6 +1,8 @@
 package com.agro.crm.features.farmers;
 
 import com.agro.crm.features.agromap.feild.Field;
+import com.agro.crm.features.dashboard.activityLog.AuditAction;
+import com.agro.crm.features.dashboard.activityLog.AuditService;
 import com.agro.crm.features.user.User;
 import com.agro.crm.features.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -20,8 +22,9 @@ public class FarmerService {
     private final FarmerRepository farmerRepository;
     private final UserRepository userRepository;
     private final FarmerCacheService farmerCacheService;
+    private final AuditService auditService;
 
-    private final String[] colors = {"#2E7D32","#1565C0","#E65100","#6A1B9A","#E65100","#AD1457","#00695C","#4E342E","#4E342E"};
+    private final String[] colors = {"#2E7D32", "#1565C0", "#E65100", "#6A1B9A", "#E65100", "#AD1457", "#00695C", "#4E342E", "#4E342E"};
 
     @Transactional
     @CacheEvict(value = "farmers", allEntries = true)
@@ -30,68 +33,60 @@ public class FarmerService {
         int randomNum = rand.nextInt(8);
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User manager = userRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("Manager not found"));
-        Farmer farmer = new Farmer();
-        farmer.setFullName(dto.getFullName());
-        farmer.setPhone(dto.getPhone());
-        farmer.setEmail(dto.getEmail());
-        farmer.setRegion(dto.getRegion());
-        farmer.setTotalLandHa(dto.getTotalLandHa());
-        farmer.setColor(colors[randomNum]);
-        farmer.setStatus(FarmerStatus.NEW);
-        farmer.setManager(manager);
+        User manager = userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Manager not found"));
 
-        if (dto.getFields() != null && !dto.getFields().isEmpty()) {
-            List<Field> fieldEntities = dto.getFields().stream().map(fieldDto -> {
-                Field field = new Field();
-                field.setName(fieldDto.getName());
-                field.setAreaHa(fieldDto.getAreaHa());
-                field.setSoilType(fieldDto.getSoilType());
-                field.setLatitude(fieldDto.getLatitude());
-                field.setColorField(colors[randomNum]);
-                field.setBoundaryCoordinates(fieldDto.getBoundaryCoordinates());
-                field.setLongitude(fieldDto.getLongitude());
+        Farmer farmer = Farmer.create(dto, manager, colors[randomNum]);
 
-                field.setFarmer(farmer);
-                return field;
-            }).toList();
+        if (dto.getFields() != null) {
 
-            farmer.setFields(fieldEntities);
+            dto.getFields().forEach(fieldDto -> {
+                Field field = Field.create(fieldDto, colors[randomNum]);
+                farmer.addField(field);
+
+            });
         }
+
+        auditService.logAction(
+                AuditAction.FARMER_CREATED,
+                "Added new Farmer " + farmer.getFullName() + " (" + farmer.getRegion() + ")"
+        );
 
         return farmerRepository.save(farmer);
     }
 
-    public List<Farmer> getAll(String search) {
-        String cleanSearch = (search != null && !search.trim().isEmpty()) ? search.trim() : null;
-
-        if(cleanSearch == null) {
+    public List<Farmer> getAll(FarmerFilter filter) {
+        if (filter.isEmpty()) {
             return farmerCacheService.getAllWithCache();
         }
-        return farmerRepository.searchFarmersWithFieldsAndManager(search);
+        return farmerRepository.findAll(FarmerSpec.filter(filter));
     }
 
     public Farmer getById(Long id) {
-        return farmerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Farmer not found"));
+        return farmerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Farmer not found"));
     }
 
     @Transactional
     @CacheEvict(value = "farmers", allEntries = true)
     public Farmer update(Long id, FarmerCreateRequest dto) {
         Farmer farmer = getById(id);
-        farmer.setFullName(dto.getFullName());
-        farmer.setPhone(dto.getPhone());
-        farmer.setRegion(dto.getRegion());
-        farmer.setStatus(dto.getStatus());
-        farmer.setTotalLandHa(dto.getTotalLandHa());
 
-        return farmerRepository.save(farmer);
+        farmer.updateProfile(dto.getFullName(), dto.getPhone(), dto.getRegion(), dto.getTotalLandHa(), dto.getStatus());
+
+        auditService.logAction(
+                AuditAction.FARMER_UPDATED,
+                "Updated Farmer " + farmer.getFullName() + " (" + farmer.getRegion() + ")"
+        );
+
+        return farmer;
     }
 
     @CacheEvict(value = "farmers", allEntries = true)
     public void delete(Long id) {
+        auditService.logAction(
+                AuditAction.FARMER_DELETED,
+                " Farmer deleted"
+        );
+
         farmerRepository.deleteById(id);
     }
 }

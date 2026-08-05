@@ -1,11 +1,13 @@
 package com.agro.crm.features.equipment;
 
+import com.agro.crm.features.dashboard.activityLog.AuditAction;
+import com.agro.crm.features.dashboard.activityLog.AuditService;
 import com.agro.crm.features.equipment.dto.EquipmentDto;
 import com.agro.crm.features.equipment.dto.EquipmentResponseDto;
 import com.agro.crm.features.user.User;
 import com.agro.crm.features.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,7 @@ public class EquipmentService {
     private final EquipmentRepository equipmentRepository;
     private final EquipmentLogRepository equipmentLogRepository;
     private final UserRepository userRepository;
+    private final AuditService auditService;
 
     @Transactional()
     public List<EquipmentResponseDto> getAll() {
@@ -36,30 +39,42 @@ public class EquipmentService {
 
     @Transactional
     public EquipmentResponseDto create(EquipmentDto dto) {
-        Equipment equipment = new Equipment();
-        equipment.setName(dto.getName());
-        equipment.setType(dto.getType());
-        equipment.setLicensePlate(dto.getLicensePlate());
-        equipment.setYearMade(dto.getYearMade());
-        equipment.setMileage(dto.getMileage() != null ? dto.getMileage() : 0.0);
-        equipment.setNextService(dto.getNextService());
-        equipment.setDeviceId(dto.getDeviceId());
-        equipment.setStatus(EquipmentStatus.AVAILABLE);
+        Equipment equipment = Equipment.create(
+                dto.getName(),
+                dto.getType(),
+                dto.getLicensePlate(),
+                dto.getYearMade(),
+                dto.getMileage() != null ? dto.getMileage() : 0.0,
+                dto.getNextService(),
+                dto.getDeviceId()
+
+        );
 
         if (dto.getOperatorId() != null) {
             User operator = userRepository.findById(dto.getOperatorId())
                     .orElseThrow(() -> new RuntimeException("Operator not found ID: " + dto.getOperatorId()));
-            equipment.setOperator(operator);
+            equipment.assignOperator(operator);
         }
 
         Equipment savedEquipment = equipmentRepository.save(equipment);
+
+        auditService.logAction(
+                AuditAction.EQUIPMENT_CREATED,
+                "Add new Equipment " + equipment.getName()
+        );
+
         return EquipmentResponseDto.fromEntity(savedEquipment);
     }
 
     public Equipment changeStatus(Long id, EquipmentStatus status) {
         Equipment eq = equipmentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Equipment not found"));
-        eq.setStatus(status);
+        eq.updateStatus(status);
+
+        auditService.logAction(
+                AuditAction.EQUIPMENT_UPDATED,
+                "Status changed"
+        );
         return equipmentRepository.save(eq);
     }
 
@@ -69,7 +84,11 @@ public class EquipmentService {
 
         log.setEquipment(eq);
 
-        eq.setMileage((eq.getMileage() == null ? 0 : eq.getMileage()) + log.getMileageAdded());
+        eq.updateMileage((eq.getMileage() == null ? 0 : eq.getMileage()) + log.getMileageAdded());
+        auditService.logAction(
+                AuditAction.EQUIPMENT_UPDATED,
+                "Added Log"
+        );
         equipmentRepository.save(eq);
 
         return equipmentLogRepository.save(log);
