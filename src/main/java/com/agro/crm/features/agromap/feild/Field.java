@@ -4,8 +4,12 @@ import com.agro.crm.features.agromap.crop.Crop;
 import com.agro.crm.features.farmers.Farmer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -15,8 +19,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "fields")
-@Data
-
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Field {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,10 +51,90 @@ public class Field {
     @JsonIgnore
     private Farmer farmer;
 
+    @Column
+    private String colorField;
+
     @OneToMany(mappedBy = "field", cascade = CascadeType.ALL)
+    @Fetch(FetchMode.SUBSELECT)
     private List<Crop> crops;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    private Field(
+            String name,
+            BigDecimal areaHa,
+            SoilType soilType,
+            BigDecimal latitude,
+            BigDecimal longitude,
+            String boundaryCoordinates,
+            String colorField
+    ) {
+        this.validate(name, areaHa, latitude, longitude);
+
+        this.name = name;
+        this.areaHa = areaHa;
+        this.soilType = soilType;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.boundaryCoordinates = boundaryCoordinates;
+        this.colorField = colorField;
+    }
+
+    public static Field create(
+            FieldDto dto,
+            String color
+    ) {
+        return new Field(
+                dto.getName(),
+                dto.getAreaHa(),
+                dto.getSoilType(),
+                dto.getLatitude(),
+                dto.getLongitude(),
+                dto.getBoundaryCoordinates(),
+                color
+        );
+    }
+
+    public void updateInfo(
+            String name,
+            BigDecimal areaHa,
+            SoilType soilType,
+            BigDecimal latitude,
+            BigDecimal longitude,
+            String boundaryCoordinates
+    ) {
+        this.validate(name, areaHa, latitude, longitude);
+        this.name = name;
+        this.areaHa = areaHa;
+        this.soilType = soilType;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.boundaryCoordinates = boundaryCoordinates;
+    }
+
+    public void assignTo(Farmer farmer) {
+        this.farmer = farmer;
+    }
+
+    private void validate(
+            String name,
+            BigDecimal areaHa,
+            BigDecimal latitude,
+            BigDecimal longitude
+    ) {
+        if (name == null || name.isBlank())
+            throw new IllegalArgumentException("Field name is required");
+
+        if (areaHa == null || areaHa.compareTo(BigDecimal.ZERO) <= 0)
+            throw new IllegalArgumentException("Area must be positive");
+
+        if (latitude == null)
+            throw new IllegalArgumentException("Latitude is required");
+
+        if (longitude == null)
+            throw new IllegalArgumentException("Longitude is required");
+
+    }
 }

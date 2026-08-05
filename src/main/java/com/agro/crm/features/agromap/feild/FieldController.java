@@ -25,6 +25,10 @@ public class FieldController {
         return fieldService.updateField(id, dto);
     }
 
+    @GetMapping
+    public List<Field> getAllFields() {
+        return fieldService.getAllFields();
+    }
     @GetMapping("/farmer/{farmerId}")
     public List<Field> getByFarmer(@PathVariable Long farmerId) {
         return fieldService.getFieldsByFarmer(farmerId);

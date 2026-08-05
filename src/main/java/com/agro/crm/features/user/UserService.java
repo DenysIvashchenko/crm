@@ -19,40 +19,32 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public UserDto createUser(RegisterRequest req) {
-        User user = new User();
-        user.setUserName(req.getUsername());
-        user.setFullName(req.getFullName());
-        user.setEmail(req.getEmail());
-        user.setPassword(passwordEncoder.encode(req.getPassword()));
+        User user = User.create(
+                req.getUsername(),
+                req.getFullName(),
+                req.getEmail(),
+                passwordEncoder.encode(req.getPassword()),
+                req.getRoles()
+        );
 
-        user.setRoles(req.getRoles());
-
-        User savedUser = userRepository.save(user);
-
-        return UserDto.from(savedUser);
+        return UserDto.from(userRepository.save(user));
     }
 
     @Transactional
     public UserDto updateUser(Long id, UserUpdateRequestDto req) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
 
-        user.setUserName(req.getUserName());
-        user.setFullName(req.getFullName());
-        user.setEmail(req.getEmail());
+        user.updateProfile(req.getUserName(), req.getFullName(), req.getEmail());
 
-        if (req.getPassword() != null && !req.getPassword().trim().isEmpty()) {
-            user.setPassword(passwordEncoder.encode(req.getPassword()));
+        if (req.getPassword() != null && !req.getPassword().isBlank()) {
+            user.changePassword(passwordEncoder.encode(req.getPassword()));
         }
 
         if (req.getRoles() != null) {
-            user.getRoles().clear();
-            user.getRoles().addAll(req.getRoles());
+            user.replaceRoles(req.getRoles());
         }
 
-        User savedUser = userRepository.saveAndFlush(user);
-
-        return UserDto.from(savedUser);
+        return UserDto.from(user);
     }
 
     public UserDto getById(Long id) {
