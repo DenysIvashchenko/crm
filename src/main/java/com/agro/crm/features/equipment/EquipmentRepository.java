@@ -29,7 +29,7 @@ public interface EquipmentRepository extends JpaRepository<Equipment, Long>, Jpa
     @Query("SELECT new com.agro.crm.features.dashboard.ChartsResponseDto$EquipmentLoadDto(" +
             "e.id, e.name, CAST(e.type AS string), e.mileage) " +
             "FROM Equipment e ORDER BY e.mileage DESC")
-    List<ChartsResponseDto.EquipmentLoadDto> findTopEquipmentLoads(Pageable pageable);
+    List<ChartsResponseDto.EquipmentLoadDto> findEquipmentLoads();
 
 
 }

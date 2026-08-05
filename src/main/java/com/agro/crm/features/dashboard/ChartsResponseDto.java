@@ -13,7 +13,8 @@ public record ChartsResponseDto(
             Long clayCount,
             Long sandyCount,
             Long loamCount,
-            Long peatCount
+            Long peatCount,
+            Long siltCount
     ) {}
 
     public record CropStatusChartDto(

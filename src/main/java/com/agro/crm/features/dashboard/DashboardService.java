@@ -59,7 +59,7 @@ public class DashboardService {
         var soilChart = fieldRepository.getSoilTypeChartData();
         var cropChart = cropRepository.getCropStatusChartData();
         var equipmentChar = equipmentRepository.getEquipmentStatusChartData();
-        var topEquipment = equipmentRepository.findTopEquipmentLoads(PageRequest.of(0, 4));
+        var topEquipment = equipmentRepository.findEquipmentLoads();
 
         return new ChartsResponseDto(soilChart, cropChart, equipmentChar, topEquipment);
     }

@@ -24,7 +24,8 @@ public interface FieldRepository extends JpaRepository<Field, Long> {
             "SUM(CASE WHEN f.soilType = 'CLAY' THEN 1 ELSE 0 END), " +
             "SUM(CASE WHEN f.soilType = 'SANDY' THEN 1 ELSE 0 END), " +
             "SUM(CASE WHEN f.soilType = 'LOAM' THEN 1 ELSE 0 END), " +
-            "SUM(CASE WHEN f.soilType = 'PEAT' THEN 1 ELSE 0 END)) " +
+            "SUM(CASE WHEN f.soilType = 'PEAT' THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN f.soilType = 'SILT' THEN 1 ELSE 0 END)) " +
             "FROM Field f")
     ChartsResponseDto.SoilTypeChartDto getSoilTypeChartData();
 }

@@ -1,5 +1,7 @@
 package com.agro.crm.features.equipment;
 
+import com.agro.crm.features.dashboard.activityLog.AuditAction;
+import com.agro.crm.features.dashboard.activityLog.AuditService;
 import com.agro.crm.features.equipment.dto.EquipmentDto;
 import com.agro.crm.features.equipment.dto.EquipmentResponseDto;
 import com.agro.crm.features.user.User;
@@ -19,6 +21,7 @@ public class EquipmentService {
     private final EquipmentRepository equipmentRepository;
     private final EquipmentLogRepository equipmentLogRepository;
     private final UserRepository userRepository;
+    private final AuditService auditService;
 
     @Transactional()
     public List<EquipmentResponseDto> getAll() {
@@ -54,6 +57,12 @@ public class EquipmentService {
         }
 
         Equipment savedEquipment = equipmentRepository.save(equipment);
+
+        auditService.logAction(
+                AuditAction.EQUIPMENT_CREATED,
+                "Add new Equipment " + equipment.getName()
+        );
+
         return EquipmentResponseDto.fromEntity(savedEquipment);
     }
 
@@ -61,6 +70,11 @@ public class EquipmentService {
         Equipment eq = equipmentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Equipment not found"));
         eq.updateStatus(status);
+
+        auditService.logAction(
+                AuditAction.EQUIPMENT_UPDATED,
+                "Status changed"
+        );
         return equipmentRepository.save(eq);
     }
 
@@ -71,6 +85,10 @@ public class EquipmentService {
         log.setEquipment(eq);
 
         eq.updateMileage((eq.getMileage() == null ? 0 : eq.getMileage()) + log.getMileageAdded());
+        auditService.logAction(
+                AuditAction.EQUIPMENT_UPDATED,
+                "Added Log"
+        );
         equipmentRepository.save(eq);
 
         return equipmentLogRepository.save(log);
